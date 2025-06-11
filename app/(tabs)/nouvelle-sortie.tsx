@@ -1,72 +1,54 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { useRouter } from 'expo-router'; // Pour naviguer entre les écrans
+import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { STYLES, COLORS } from '../theme';
 
 export default function NouvelleSortie() {
-  const router = useRouter(); // Permet de naviguer vers d'autres écrans
-
-  // États pour stocker les valeurs entrées dans le formulaire
+  const router = useRouter();
   const [date, setDate] = useState('');
   const [lieu, setLieu] = useState('');
 
-  // Fonction appelée quand on clique sur "Enregistrer la sortie"
   const handleSave = () => {
     if (!date || !lieu) {
-      // Si un champ est vide, on affiche une alerte
       Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
       return;
     }
 
-    // Affiche une alerte de confirmation (plus tard, on sauvegardera en local ou backend)
-    Alert.alert('Sortie enregistrée', `Date : ${date}\nLieu : ${lieu}`);
-
-    // Navigue vers l'écran d'ajout d'action (prochaine étape)
+    Alert.alert('Sortie enregistrée', `📅 Date : ${date}\n📍 Lieu : ${lieu}`);
     router.push('/ajouter-action');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Nouvelle Sortie en Mer</Text>
+    <View style={STYLES.container}>
+      <Text style={STYLES.title}>⛵ Nouvelle Sortie en Mer</Text>
 
-      <Text>Date :</Text>
+      <Text style={styles.label}>Date :</Text>
       <TextInput
         placeholder="JJ/MM/AAAA"
         value={date}
         onChangeText={setDate}
-        style={styles.input}
+        style={STYLES.input}
       />
 
-      <Text>Lieu :</Text>
+      <Text style={styles.label}>Lieu :</Text>
       <TextInput
         placeholder="Ex : Zone C3"
         value={lieu}
         onChangeText={setLieu}
-        style={styles.input}
+        style={STYLES.input}
       />
 
-      <Button title="Enregistrer la sortie" onPress={handleSave} />
+      <TouchableOpacity style={STYLES.button} onPress={handleSave}>
+        <Text style={STYLES.buttonText}>✅ Enregistrer la sortie</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
-// Styles pour rendre l’écran plus joli
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 22,
+  label: {
+    marginBottom: 6,
+    color: COLORS.text,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
-    borderColor: '#ffff',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 10,
   },
 });

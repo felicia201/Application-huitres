@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Button, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { synchroniserActions, recupererActionsServeur } from '../utils/synchroniser';
+import {
+  synchroniserActions,
+  recupererActionsServeur,
+} from '../utils/synchroniser';
+import { COLORS, STYLES } from '../theme';
 
 export default function ListeActions() {
   const [actions, setActions] = useState([]);
@@ -15,51 +26,65 @@ export default function ListeActions() {
     chargerActionsLocales();
   }, []);
 
-  // 🔁 Supprimer une action locale
   const supprimerAction = async (id) => {
     const data = await AsyncStorage.getItem('actions');
-    const actions = data ? JSON.parse(data) : [];
+    const liste = data ? JSON.parse(data) : [];
+    const nouveau = liste.filter((a) => a.id !== id);
+    await AsyncStorage.setItem('actions', JSON.stringify(nouveau));
+    setActions(nouveau);
+  };
 
-    const nouvellesActions = actions.filter((a) => a.id !== id);
-
-    await AsyncStorage.setItem('actions', JSON.stringify(nouvellesActions));
-    setActions(nouvellesActions);
+  const viderActions = async () => {
+    await AsyncStorage.removeItem('actions');
+    setActions([]);
+    Alert.alert('🧹 Actions supprimées localement');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>📋 Liste des Actions</Text>
+    <View style={STYLES.container}>
+      <Text style={STYLES.title}>📋 Actions enregistrées</Text>
 
-      <Button
-        title="🔄 Synchroniser vers le serveur"
-        onPress={async () => {
-          const res = await synchroniserActions();
-          Alert.alert(res.status, res.count ? `${res.count} actions envoyées.` : '');
-          chargerActionsLocales();
-        }}
-      />
+      <TouchableOpacity style={STYLES.button} onPress={async () => {
+        const res = await synchroniserActions();
+        Alert.alert(res.status, res.count ? `${res.count} action(s) envoyée(s)` : '');
+        chargerActionsLocales();
+      }}>
+        <Text style={STYLES.buttonText}>🔄 Synchroniser</Text>
+      </TouchableOpacity>
 
-      <Button
-        title="📥 Télécharger depuis le serveur"
-        onPress={async () => {
-          const res = await recupererActionsServeur();
-          if (res.status === 'OK') {
-            setActions(res.actions);
-          } else {
-            Alert.alert('Erreur', res.message);
-          }
-        }}
-      />
+      <TouchableOpacity style={STYLES.button} onPress={async () => {
+        const res = await recupererActionsServeur();
+        if (res.status === 'OK') {
+          setActions(res.actions);
+        } else {
+          Alert.alert('Erreur', res.message);
+        }
+      }}>
+        <Text style={STYLES.buttonText}>📥 Télécharger du serveur</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[STYLES.button, { backgroundColor: '#E74C3C' }]} onPress={viderActions}>
+        <Text style={STYLES.buttonText}>🧹 Vider tout</Text>
+      </TouchableOpacity>
 
       <FlatList
         data={actions}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text>Type : {item.type}</Text>
-            <Text>Quantité : {item.quantite}</Text>
-            <Text>Commentaire : {item.commentaire || 'N/A'}</Text>
-            <Button title="🗑️ Supprimer" onPress={() => supprimerAction(item.id)} />
+          <View style={STYLES.card}>
+            <Text style={styles.label}>📅 {new Date(item.date).toLocaleString()}</Text>
+            <Text>👤 {item.auteur || 'Inconnu'}</Text>
+            <Text>🌊 Marée : {item.maree || 'N/A'}</Text>
+            <Text>🧪 Type : {item.type}</Text>
+            <Text>📦 Quantité : {item.quantite}</Text>
+            {item.commentaire && <Text>📝 {item.commentaire}</Text>}
+
+            <TouchableOpacity
+              onPress={() => supprimerAction(item.id)}
+              style={[STYLES.button, { backgroundColor: '#E67E22', marginTop: 10 }]}
+            >
+              <Text style={STYLES.buttonText}>🗑️ Supprimer</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -67,15 +92,11 @@ export default function ListeActions() {
   );
 }
 
-
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
-  card: {
-    backgroundColor: '#e0f7fa',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
+  label: {
+    fontWeight: 'bold',
+    color: COLORS.text,
+    marginBottom: 4,
   },
 });
 
