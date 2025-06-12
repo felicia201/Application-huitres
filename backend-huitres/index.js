@@ -24,6 +24,11 @@ app.get('/actions', (req, res) => {
   res.json(actions);
 });
 
+// ✅ Pour que Render affiche un message d'accueil
+app.get('/', (req, res) => {
+  res.send('✅ API Huitres en ligne');
+});
+
 app.listen(PORT, () => {
   console.log(`✅ Serveur actif sur le port ${PORT}`);
 });
