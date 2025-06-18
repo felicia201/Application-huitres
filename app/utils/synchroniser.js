@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //  IP locale + port 3000 (backend Express)
-const API_URL = 'https://application-huitres.onrender.com';
+const API_URL = 'https://backend-huitres.onrender.com';
 
 export const synchroniserActions = async () => {
   try {

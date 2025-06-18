@@ -39,7 +39,7 @@ export default function NouvelleSortie() {
       />
 
       <TouchableOpacity style={STYLES.button} onPress={handleSave}>
-        <Text style={STYLES.buttonText}>✅ Enregistrer la sortie</Text>
+        <Text style={STYLES.buttonText}> Enregistrer la sortie</Text>
       </TouchableOpacity>
     </View>
   );

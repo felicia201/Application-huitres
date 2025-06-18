@@ -1,10 +1,22 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React ,{ useEffect}from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet,  } from 'react-native';
 import { useRouter } from 'expo-router';
 import { COLORS } from '../theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Accueil() {
   const router = useRouter();
+
+  
+ useEffect(() => {
+    const checkLogin = async () => {
+      const auteur = await AsyncStorage.getItem('auteur');
+      if (!auteur) {
+        router.replace('/login'); // Si pas connecté, redirige vers login
+      }
+    };
+    checkLogin();
+  }, []);
 
   return (
     <View style={styles.container}>
