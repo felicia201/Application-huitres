@@ -45,7 +45,7 @@ export default function Login() {
       />
 
       <TouchableOpacity style={STYLES.button} onPress={handleLogin}>
-        <Text style={STYLES.buttonText}>✅ Entrer</Text>
+        <Text style={STYLES.buttonText}> Entrer</Text>
       </TouchableOpacity>
     </View>
   );
