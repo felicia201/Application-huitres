@@ -1,35 +1,30 @@
-import React, { useState ,useEffect} from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { COLORS, STYLES } from '../theme';
 
 export default function AjouterAction() {
   const router = useRouter();
+
   const [typeAction, setTypeAction] = useState('');
   const [quantite, setQuantite] = useState('');
   const [commentaire, setCommentaire] = useState('');
   const [maree, setMaree] = useState('');
-  // const [auteur, setAuteur] = useState('');
-
   const [auteur, setAuteur] = useState('');
-  useEffect(() => {
-  const chargerAuteur = async () => {
-    const a = await AsyncStorage.getItem('auteur');
-    setAuteur(a || 'Anonyme');
-  };
-  chargerAuteur();
-}, []);
-
 
   const enregistrerAction = async () => {
     if (!typeAction || !quantite) {
       Alert.alert('Erreur', 'Type et quantité sont obligatoires.');
       return;
     }
- // On crée une nouvelle action sous forme d’objet
+
     const nouvelleAction = {
-      id: Date.now().toString(),
       type: typeAction,
       quantite: parseInt(quantite),
       commentaire,
@@ -37,13 +32,25 @@ export default function AjouterAction() {
       auteur,
       date: new Date().toISOString(),
     };
- // On récupère la liste existante dans le stockage local
-    const data = await AsyncStorage.getItem('actions');
-    const liste = data ? JSON.parse(data) : [];
-    liste.push(nouvelleAction);
-    await AsyncStorage.setItem('actions', JSON.stringify(liste));
-    Alert.alert(' Action enregistrée');
-    router.push('/liste-actions');
+
+    try {
+      const response = await fetch('http://localhost:3000/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify([nouvelleAction]), // 👈 le backend attend un tableau
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        Alert.alert('✅ Action enregistrée', result.message);
+        router.push('/liste-actions');
+      } else {
+        Alert.alert('Erreur', result.error || 'Échec de l’enregistrement');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      Alert.alert('Erreur', 'Connexion au serveur impossible');
+    }
   };
 
   return (
