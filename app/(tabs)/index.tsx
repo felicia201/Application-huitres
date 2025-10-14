@@ -1,92 +1,6 @@
-// import React ,{ useEffect}from 'react';
-// import { View, Text, Image, TouchableOpacity, StyleSheet,  } from 'react-native';
-// import { useRouter } from 'expo-router';
-// import { COLORS } from '../theme';
-// // import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// export default function Accueil() {
-//   const router = useRouter();
-
-  
-//  useEffect(() => {
-//     const checkLogin = async () => {
-//       const auteur = await AsyncStorage.getItem('auteur');
-//       if (!auteur) {
-//         router.replace('/login'); // Si pas connecté, redirige vers login
-//       }
-//     };
-//     checkLogin();
-//   }, []);
-
-//   return (
-//     <View style={styles.container}>
-//       <Image
-//         source={require('../utils/logo.png')} // ← ton logo ici
-//         style={styles.logo}
-//       />
-//       <Text style={styles.title}>Application Ostréicole</Text>
-//       <Text style={styles.subtitle}>Gérez vos semis et récoltes en mer</Text>
-
-//       <TouchableOpacity style={styles.button} onPress={() => router.push('/ajouter-action')}>
-//         <Text style={styles.buttonText}>➕ Nouvelle action</Text>
-//       </TouchableOpacity>
-
-//       <TouchableOpacity style={styles.button} onPress={() => router.push('/liste-actions')}>
-//         <Text style={styles.buttonText}>📋 Voir les actions</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: COLORS.background,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     padding: 20,
-//   },
-//   logo: {
-//     width: 120,
-//     height: 120,
-//     marginBottom: 20,
-//     borderRadius: 60,
-//   },
-//   title: {
-//     fontSize: 26,
-//     fontWeight: 'bold',
-//     color: COLORS.text,
-//     textAlign: 'center',
-//     marginBottom: 10,
-//   },
-//   subtitle: {
-//     fontSize: 16,
-//     color: COLORS.text,
-//     textAlign: 'center',
-//     marginBottom: 30,
-//   },
-//   button: {
-//     backgroundColor: COLORS.primary,
-//     paddingVertical: 12,
-//     paddingHorizontal: 20,
-//     borderRadius: 10,
-//     marginVertical: 10,
-//     width: '80%',
-//     alignItems: 'center',
-//   },
-//   buttonText: {
-//     color: COLORS.white,
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//   },
-// });
-
-
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
-import { COLORS } from '../theme';
-// import { useState } from 'react';
 
 export default function Accueil() {
   const router = useRouter();
@@ -95,10 +9,7 @@ export default function Accueil() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('http://localhost:3000/me', {
-          method: 'GET',
-          credentials: 'include', // ⬅️ IMPORTANT pour que le cookie de session soit envoyé
-        });
+        const res = await fetch('http://127.0.0.1:3000/me');
         if (res.status === 200) {
           const data = await res.json();
           setUser(data);
@@ -110,82 +21,106 @@ export default function Accueil() {
         router.replace('/login');
       }
     };
-
     fetchUser();
   }, []);
 
-  
-
-
-
-
   const handleLogout = async () => {
-    await fetch('http://localhost:3000/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
+    await fetch('http://127.0.0.1:3000/logout', { method: 'POST' });
     router.replace('/login');
   };
 
   return (
-    <View style={styles.container}>
-      {user && (
-        <View style={styles.profile}>
-          {/* <Image source={require('../utils/profile.png')} style={styles.avatar} /> */}
-          <Text style={styles.username}>{user.username}</Text>
-          <TouchableOpacity onPress={handleLogout}>
-            <Text style={styles.logout}>Se déconnecter</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+    <ImageBackground
+      source={{
+        uri: 'https://images.unsplash.com/photo-1501959915551-4e8d30928317?auto=format&fit=crop&w=1080&q=80',
+      }}
+      style={styles.background}
+      blurRadius={2}
+    >
+      <View style={styles.overlay}>
+        {user && (
+          <View style={styles.profile}>
+            <Text style={styles.username}>👋 {user.username}</Text>
+            <TouchableOpacity onPress={handleLogout}>
+              <Text style={styles.logout}>Se déconnecter</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
-      <Text style={styles.title}>🐚 Application Ostréicole</Text>
-      <Text style={styles.subtitle}>Bienvenue sur l'application !</Text>
+        <Text style={styles.title}>🐚 Application Ostréicole</Text>
+        <Text style={styles.subtitle}>Bienvenue dans votre univers marin</Text>
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/ajouter-action')}>
-        <Text style={styles.buttonText}>➕ Ajouter une action</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/ajouter-action')}>
+          <Text style={styles.buttonText}>➕ Ajouter une action</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/liste-actions')}>
-        <Text style={styles.buttonText}>📋 Voir les actions</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/liste-actions')}>
+          <Text style={styles.buttonText}>📋 Voir les actions</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: COLORS.background,
-    alignItems: 'center',
+    resizeMode: 'cover',
+  },
+  overlay: {
+    flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 64, 128, 0.45)',
     padding: 20,
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: COLORS.text,
-    marginBottom: 15,
+    color: '#fffbe6',
+    marginBottom: 10,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: COLORS.text,
+    color: '#fff',
     marginBottom: 30,
     textAlign: 'center',
   },
   button: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginVertical: 10,
+    backgroundColor: '#00a8e8',
+    borderRadius: 25,
+    paddingVertical: 14,
+    paddingHorizontal: 25,
+    marginVertical: 8,
     width: '80%',
     alignItems: 'center',
+    shadowColor: '#00a8e8',
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
+    elevation: 3,
   },
   buttonText: {
-    color: COLORS.white,
-    fontSize: 16,
+    color: '#fffbe6',
+    fontSize: 17,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  profile: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
+    alignItems: 'flex-end',
+  },
+  username: {
+    fontSize: 18,
+    color: '#fff',
     fontWeight: 'bold',
   },
+  logout: {
+    color: '#ffdb58',
+    fontWeight: '600',
+    marginTop: 5,
+  },
 });
+

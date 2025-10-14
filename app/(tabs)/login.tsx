@@ -1,93 +1,3 @@
-// import React, { useState } from 'react';
-// import {
-//   View,
-//   Text,
-//   TextInput,
-//   TouchableOpacity,
-//   Alert,
-//   StyleSheet,
-//   Image,
-// } from 'react-native';
-// // import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useRouter } from 'expo-router';
-// import { COLORS, STYLES } from '../theme';
-
-// export default function Login() {
-//   const [pseudo, setPseudo] = useState('');
-//   const router = useRouter();
-
-//   const handleLogin = async () => {
-//     if (!pseudo.trim()) {
-//       Alert.alert('Erreur', 'Veuillez entrer votre prénom.');
-//       return;
-//     }
-
-//     await AsyncStorage.setItem('auteur', pseudo.trim());
-//     router.replace('/'); 
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Image
-//         source={require('../utils/logo.png')}
-//         style={styles.logo}
-//       />
-
-//       <Text style={styles.title}>Bienvenue 👋</Text>
-//       <Text style={styles.subtitle}>Veuillez vous identifier</Text>
-
-//       {/* <Text style={styles.label}>Prénom :</Text> */}
-//       <TextInput
-//         style={STYLES.input}
-//         placeholder=" Clara"
-//         value={pseudo}
-//         onChangeText={setPseudo}
-//       />
-
-//       <TouchableOpacity style={STYLES.button} onPress={handleLogin}>
-//         <Text style={STYLES.buttonText}> Entrer</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: COLORS.background,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     padding: 20,
-//   },
-//   logo: {
-//     width: 100,
-//     height: 100,
-//     marginBottom: 25,
-//     borderRadius: 50,
-//   },
-//   title: {
-//     fontSize: 26,
-//     fontWeight: 'bold',
-//     color: COLORS.text,
-//     marginBottom: 8,
-//     textAlign: 'center',
-//   },
-//   subtitle: {
-//     fontSize: 16,
-//     color: COLORS.text,
-//     marginBottom: 25,
-//     textAlign: 'center',
-//   },
-//   label: {
-//     fontSize: 16,
-//     color: COLORS.text,
-//     alignSelf: 'flex-start',
-//     marginBottom: 5,
-//     marginLeft: '10%',
-//   },
-// });
-
-
 import React, { useState } from 'react';
 import {
   View,
@@ -96,10 +6,15 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
-  Image,
+  ImageBackground,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { COLORS } from '../theme';
+
+const API_URL =
+  Platform.OS === 'android'
+    ? 'http://10.0.2.2:3000'
+    : 'http://127.0.0.1:3000';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -113,104 +28,137 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
+
       if (!response.ok) {
         Alert.alert('Erreur', data.error || 'Connexion échouée');
         return;
       }
 
-      Alert.alert('Succès', 'Connexion réussie 🎉');
+      Alert.alert('Bienvenue', `Bonjour ${data.user.username}`);
       router.replace('/');
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible de se connecter');
+      console.log('Erreur login:', error);
+      Alert.alert('Erreur', 'Impossible de se connecter au serveur');
     }
   };
 
   return (
-    <View style={styles.container}>
-      {/* <Image source={require('../utils/login-bg.png')} style={styles.backgroundImage} /> */}
+    <ImageBackground
+      source={{
+        uri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1080&q=80',
+      }}
+      style={styles.background}
+      blurRadius={3}
+    >
       <View style={styles.overlay}>
-        <Text style={styles.greeting}>Bienvenue 👋</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#aaa"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Mot de passe"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Se connecter</Text>
-        </TouchableOpacity>
+        <Text style={styles.title}>🌞 Bienvenue sur l'appli ostréicole</Text>
 
-        <TouchableOpacity onPress={() => router.push('/signup')}>
-          <Text style={styles.linkText}>Pas encore de compte ? <Text style={styles.link}>S’inscrire</Text></Text>
-        </TouchableOpacity>
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="Adresse e-mail"
+            placeholderTextColor="#f0f8ff"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Mot de passe"
+            placeholderTextColor="#f0f8ff"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Se connecter</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push('/signup')}>
+            <Text style={styles.link}>
+              Pas encore de compte ? <Text style={styles.linkHighlight}>S'inscrire</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  backgroundImage: {
-    ...StyleSheet.absoluteFillObject,
-    width: '100%',
-    height: '100%',
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
   },
   overlay: {
     flex: 1,
     justifyContent: 'center',
-    padding: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(0, 64, 128, 0.45)', 
+    paddingHorizontal: 25,
   },
-  greeting: {
-    fontSize: 24,
+  title: {
+    fontSize: 26,
     fontWeight: 'bold',
-    color: COLORS.text,
-    marginBottom: 24,
     textAlign: 'center',
+    color: '#fffbe6',
+    marginBottom: 40,
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 4,
+  },
+  form: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
   },
   input: {
-    backgroundColor: COLORS.white,
-    borderColor: COLORS.secondary,
     borderWidth: 1,
-    borderRadius: 10,
+    borderColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 12,
     padding: 12,
     marginBottom: 15,
+    color: '#fff',
   },
   button: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 10,
-    padding: 14,
+    backgroundColor: '#00a8e8',
+    borderRadius: 25,
+    paddingVertical: 14,
     alignItems: 'center',
     marginTop: 10,
+    shadowColor: '#00a8e8',
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 3,
   },
   buttonText: {
-    color: COLORS.white,
-    fontSize: 16,
+    color: '#fffbe6',
+    fontSize: 17,
     fontWeight: 'bold',
-  },
-  linkText: {
-    marginTop: 16,
-    color: COLORS.text,
-    textAlign: 'center',
+    textTransform: 'uppercase',
   },
   link: {
-    color: COLORS.secondary,
+    marginTop: 20,
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 15,
+  },
+  linkHighlight: {
+    color: '#ffdb58', 
     fontWeight: 'bold',
   },
 });

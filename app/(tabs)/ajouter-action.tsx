@@ -37,7 +37,7 @@ export default function AjouterAction() {
       const response = await fetch('http://localhost:3000/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify([nouvelleAction]), // 👈 le backend attend un tableau
+        body: JSON.stringify([nouvelleAction]), //   tableau
       });
 
       const result = await response.json();

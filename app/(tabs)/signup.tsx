@@ -6,10 +6,15 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
-  Image,
+  ImageBackground,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { COLORS } from '../theme';
+
+const API_URL =
+  Platform.OS === 'android'
+    ? 'http://10.0.2.2:3000'
+    : 'http://127.0.0.1:3000';
 
 export default function SignUp() {
   const [username, setUsername] = useState('');
@@ -24,7 +29,7 @@ export default function SignUp() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/signup', {
+      const response = await fetch(`${API_URL}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
@@ -36,103 +41,126 @@ export default function SignUp() {
         return;
       }
 
-      Alert.alert('Compte créé', 'Redirection vers la connexion');
+      Alert.alert('Succès', 'Compte créé avec succès');
       router.replace('/login');
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible de s’inscrire');
+      console.log('Erreur inscription:', error);
+      Alert.alert('Erreur', 'Impossible de se connecter au serveur');
     }
   };
 
   return (
-    <View style={styles.container}>
-      {/* <Image source={require('../utils/login-bg.png')} style={styles.backgroundImage} /> */}
+    <ImageBackground
+      source={{
+        uri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1080&q=80',
+      }}
+      style={styles.background}
+      blurRadius={3}
+    >
       <View style={styles.overlay}>
-        <Text style={styles.greeting}>Créer un compte</Text>
+        <Text style={styles.title}>🌊 Crée ton compte ostréicole</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Nom complet"
-          placeholderTextColor="#aaa"
-          value={username}
-          onChangeText={setUsername}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#aaa"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Mot de passe"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="Nom complet"
+            placeholderTextColor="#f0f8ff"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Adresse e-mail"
+            placeholderTextColor="#f0f8ff"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Mot de passe"
+            placeholderTextColor="#f0f8ff"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
-        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>S'inscrire</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+            <Text style={styles.buttonText}>S'inscrire</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/login')}>
-          <Text style={styles.linkText}>Déjà inscrit ? <Text style={styles.link}>Se connecter</Text></Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/login')}>
+            <Text style={styles.link}>
+              Déjà inscrit ? <Text style={styles.linkHighlight}>Se connecter</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  backgroundImage: {
-    ...StyleSheet.absoluteFillObject,
-    width: '100%',
-    height: '100%',
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
   },
   overlay: {
     flex: 1,
     justifyContent: 'center',
-    padding: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(0, 64, 128, 0.45)',
+    paddingHorizontal: 25,
   },
-  greeting: {
-    fontSize: 24,
+  title: {
+    fontSize: 26,
     fontWeight: 'bold',
-    color: COLORS.text,
-    marginBottom: 24,
     textAlign: 'center',
+    color: '#fffbe6',
+    marginBottom: 40,
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 4,
+  },
+  form: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
   },
   input: {
-    backgroundColor: COLORS.white,
-    borderColor: COLORS.secondary,
     borderWidth: 1,
-    borderRadius: 10,
+    borderColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 12,
     padding: 12,
     marginBottom: 15,
+    color: '#fff',
   },
   button: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 10,
-    padding: 14,
+    backgroundColor: '#00a8e8',
+    borderRadius: 25,
+    paddingVertical: 14,
     alignItems: 'center',
     marginTop: 10,
   },
   buttonText: {
-    color: COLORS.white,
-    fontSize: 16,
+    color: '#fffbe6',
+    fontSize: 17,
     fontWeight: 'bold',
-  },
-  linkText: {
-    marginTop: 16,
-    color: COLORS.text,
-    textAlign: 'center',
+    textTransform: 'uppercase',
   },
   link: {
-    color: COLORS.secondary,
+    marginTop: 20,
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 15,
+  },
+  linkHighlight: {
+    color: '#ffdb58',
     fontWeight: 'bold',
   },
 });

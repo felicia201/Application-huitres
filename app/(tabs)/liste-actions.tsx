@@ -14,7 +14,7 @@ export default function ListeActions() {
 
   const chargerActionsDepuisServeur = async () => {
     try {
-      const response = await fetch('http://localhost:3000/actions'); // 🔁 Remplace par l'URL de ton backend
+      const response = await fetch('http://localhost:3000/actions'); //  Remplace par l'URL 
       const data = await response.json();
       setActions(data);
     } catch (error) {
