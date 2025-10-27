@@ -10,11 +10,9 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { API_URL } from '../../src/config';
 
-const API_URL =
-  Platform.OS === 'android'
-    ? 'http://10.0.2.2:3000'
-    : 'http://127.0.0.1:3000';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -162,3 +160,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+

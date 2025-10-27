@@ -9,7 +9,7 @@ export default function Accueil() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:3000/me');
+        const res = await fetch('${API_URL}/me');
         if (res.status === 200) {
           const data = await res.json();
           setUser(data);
@@ -123,4 +123,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 });
+
+
 
