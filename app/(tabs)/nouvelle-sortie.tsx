@@ -22,19 +22,19 @@ export default function NouvelleSortie() {
       return;
     }
 
-    Alert.alert('✅ Sortie enregistrée', `📅 Date : ${date}\n📍 Lieu : ${lieu}`);
+    Alert.alert(' Sortie enregistrée', ` Date : ${date}\n Lieu : ${lieu}`);
     router.push('/ajouter-action');
   };
 
   return (
     <ImageBackground
-      source={require('../../assets/beach-bg.jpg')} // 🏖️ même fond que les autres pages
+      source={require('../../assets/beach-bg.jpg')}
       style={styles.background}
       resizeMode="cover"
     >
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.overlay}>
-          <Text style={styles.title}>⛵ Nouvelle Sortie en Mer</Text>
+          <Text style={styles.title}> Nouvelle Sortie en Mer</Text>
 
           <Text style={styles.label}>Date :</Text>
           <TextInput

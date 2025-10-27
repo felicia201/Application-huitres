@@ -39,7 +39,7 @@ export default function ListeActions() {
     >
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.overlay}>
-          <Text style={styles.title}>📋 Actions enregistrées</Text>
+          <Text style={styles.title}>Actions enregistrées</Text>
 
           {actions.length === 0 ? (
             <Text style={styles.emptyText}>
@@ -54,13 +54,13 @@ export default function ListeActions() {
               renderItem={({ item }) => (
                 <View style={styles.card}>
                   <Text style={styles.date}>
-                    📅 {new Date(item.date).toLocaleString()}
+                     {new Date(item.date).toLocaleString()}
                   </Text>
                   <Text>👤 {item.auteur}</Text>
                   <Text>🌊 Marée : {item.maree}</Text>
                   <Text>🧪 Type : {item.type}</Text>
                   <Text>📦 Quantité : {item.quantite}</Text>
-                  {item.commentaire && <Text>📝 {item.commentaire}</Text>}
+                  {item.commentaire && <Text> {item.commentaire}</Text>}
                 </View>
               )}
             />

@@ -45,7 +45,7 @@ export default function AjouterAction() {
 
       const result = await response.json();
       if (response.ok) {
-        Alert.alert('✅ Action enregistrée', result.message);
+        Alert.alert(' Action enregistrée', result.message);
         router.push('/liste-actions');
       } else {
         Alert.alert('Erreur', result.error || 'Échec de l’enregistrement');
