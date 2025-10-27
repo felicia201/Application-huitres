@@ -109,5 +109,5 @@ app.get('/', (req, res) => {
   res.send(' API Huitres opérationnelle');
 });
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Serveur actif sur http://192.168.1.25:${PORT}`);
+  console.log(` http://192.168.1.25:${PORT}`);
 });
