@@ -1,39 +1,21 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# dependencies
+# Node modules
 node_modules/
+backend-huitres/node_modules/
 
-# Expo
-.expo/
+# Docker volumes
+backend-huitres/mysql-data/
+backend-huitres/mysql-data/*
+!backend-huitres/init.sql
+
+# Logs
+*.log
+backend-huitres/npm-debug.log*
+
+# Environment & secrets
+.env
+backend-huitres/.env
+
+# Build files
 dist/
-web-build/
-expo-env.d.ts
-
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-app-example
+build/

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: huitres-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=huitres_app
+    depends_on:
+      - db
+    networks:
+      - huitres-net
+
+  db:
+    image: mysql:8.0
+    container_name: huitres-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: huitres_app
+    ports:
+       - "3307:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - huitres-net
+
+networks:
+  huitres-net:
+    driver: bridge

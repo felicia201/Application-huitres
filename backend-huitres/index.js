@@ -23,18 +23,28 @@ app.options('*', cors());
 
 app.use(express.json());
 
+// const db = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: '',
+//   database: 'huitres_app',
+// });
+
+
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'huitres_app',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'huitres_app',
 });
 
 db.connect((err) => {
-  if (err) throw err;
-  console.log('Connecté à MySQL');
+  if (err) {
+    console.error('❌ Erreur de connexion MySQL :', err.message);
+    return;
+  }
+  console.log(' Connecté à MySQL');
 });
-
 
 
 // Inscription
